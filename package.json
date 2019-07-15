@@ -1,0 +1,30 @@
+{
+  "name": "whos-next-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -L src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/h.d.sogbesan/whos-next-api.git"
+  },
+  "author": "Habib Sogbesan, Mohammad Adetunji",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/h.d.sogbesan/whos-next-api/issues"
+  },
+  "homepage": "https://gitlab.com/h.d.sogbesan/whos-next-api#readme",
+  "dependencies": {
+    "config": "^3.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "joi": "^14.3.1",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
