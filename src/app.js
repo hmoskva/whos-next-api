@@ -1,7 +1,6 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
-// Stops MaxListenersExceededWarning during queue creation using opts
 const restRouter = require('./routes');
 const { wrapJSON: wrap }= require('./helpers/utils');
 
