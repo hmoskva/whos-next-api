@@ -1,4 +1,5 @@
 const express = require('express');
+const authRouter = require('./auth.routes');
 
 const restRouter = express.Router();
 
@@ -14,6 +15,7 @@ const welcomeMsg = {
 restRouter.get('/', (req, res) => {
   res.json(welcomeMsg);
 });
+restRouter.use('/auth', authRouter);
 
 
 module.exports = restRouter;
