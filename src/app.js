@@ -42,7 +42,6 @@ app.use((error, req, res, next) => {
 });
 
 app.response.wrapJSON = function (obj) {
-  console.log(obj, 'obj')
   this.json(wrap(obj));
 };
 
