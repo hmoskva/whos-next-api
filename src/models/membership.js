@@ -20,7 +20,7 @@ membershipSchema.pre('save', async function (next) {
       .find({hub: this.hub, status: statusChoices.active})
       .sort({position: -1})
       .limit(1);
-    this.position = lastTurn.position + 1;
+    this.position = lastTurn.position + 1 || 1;
   }
   return next();
 });

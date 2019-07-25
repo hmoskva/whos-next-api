@@ -30,7 +30,6 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  console.log('in hete')
   if (error.isJoi) {
     error.status = 400;
   }

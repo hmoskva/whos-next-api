@@ -44,6 +44,7 @@ hubSchema.pre('save', async function (next) {
     this.slug = slug;
   }
   if (this.isModified('address')) {
+    // confirm flow gets here even during new
     const {lat, long} = await this.getLatLng();
     this.lat = lat || '';
     this.long = long || '';
