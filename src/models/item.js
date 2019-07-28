@@ -15,8 +15,14 @@ const itemSchema = new Schema({
   },
   imageURL: String,
   price: Number,
-  hub: mongoose.Types.ObjectId('Hub'),
-  currentTurn: mongoose.Types.ObjectId('User'),
+  hub: {
+    type: Schema.ObjectId,
+    ref: 'Hub'
+  },
+  currentTurn: {
+    type: Schema.ObjectId,
+    ref: 'User'
+  },
   active: {
     type: Boolean,
     default: true
@@ -24,7 +30,7 @@ const itemSchema = new Schema({
 }, {timestamps: true});
 
 itemSchema.pre('save', async function (next) {
-  if(this.isNew){
+  if (this.isNew) {
     let slug = slugify(this.name);
     const existingSlug = await this.model('Item').find({slug});
     if (existingSlug) {

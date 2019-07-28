@@ -17,7 +17,7 @@ exports.create = async (req, res, next) => {
     }
     const hub = new Hub(value);
     await hub.save();
-    return res.wrapJSON(hub);
+    return res.wrapJSON({hub});
   } catch (error) {
     return next(error);
   }
@@ -30,7 +30,7 @@ exports.findBySlug = async (req, res, next) => {
     if (!hub) {
       return next(StatusError('Hub not found'));
     }
-    return res.wrapJSON(hub);
+    return res.wrapJSON({hub});
   } catch (error) {
     return next(error);
   }
@@ -43,7 +43,7 @@ exports.findByID = async (req, res, next) => {
     if (!hub) {
       return next(StatusError('Hub not found'));
     }
-    return res.wrapJSON(hub);
+    return res.wrapJSON({hub});
   } catch (error) {
     return next(error);
   }
@@ -71,7 +71,7 @@ exports.update = async (req, res, next) => {
       hub[key] = value[key];
     });
     hub = await hub.save();
-    return res.wrapJSON(hub);
+    return res.wrapJSON({hub});
   } catch (error) {
     return next(error);
   }

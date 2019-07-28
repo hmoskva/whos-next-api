@@ -4,8 +4,14 @@ const {statusChoices} = require('../helpers/choices').membershipModelChoices;
 const Schema = mongoose.Schema;
 
 const membershipSchema = new Schema({
-  member: mongoose.Types.ObjectId('User'),
-  hub: mongoose.Types.ObjectId('Hub'),
+  member: {
+    type: Schema.ObjectId,
+    ref: 'User'
+  },
+  hub: {
+    type: Schema.ObjectId,
+    ref: 'Hub'
+  },
   position: Number,
   status: {
     type: String,

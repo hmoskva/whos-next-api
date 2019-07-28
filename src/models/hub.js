@@ -23,7 +23,10 @@ const hubSchema = new Schema({
     type: String,
     alias: 'long'
   },
-  createdBy: mongoose.Types.ObjectId('User'),
+  createdBy: {
+    type: Schema.ObjectId,
+    ref: 'User'
+  },
   confirmPurchase: {
     type: Boolean,
     default: false

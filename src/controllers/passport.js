@@ -16,6 +16,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
+        const {phone, role} = req.body;
         let user = await User.findOne({email});
         if (user) {
           return done(StatusError('User already exist'), false);
@@ -23,8 +24,11 @@ passport.use(
         const body = {
           email,
           password,
-          phone: req.body.phone
+          phone
         };
+        if (role) {
+          body.role = role;
+        }
         user = new User(body);
         await user.save();
         return done(null, user, {msg: 'Sign up Successful'});
