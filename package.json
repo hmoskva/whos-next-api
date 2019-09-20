@@ -32,7 +32,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.6",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.1"
   }
 }
