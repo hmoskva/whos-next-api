@@ -1,29 +1,28 @@
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto-random-string');
-const Joi = require('joi');
-const config = require('config');
-const User = require('../models/user');
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto-random-string");
+const Joi = require("joi");
+const config = require("../config");
+const User = require("../models/user");
 
-const StatusError = require('../helpers/errors');
+const StatusError = require("../helpers/errors");
 
-require('./passport');
-
+require("../services/passport");
 
 module.exports = {
   async signup(req, res, next) {
     const schema = Joi.object().keys({
       email: Joi.string()
-        .email({minDomainAtoms: 2})
+        .email({ minDomainAtoms: 2 })
         .required(),
       password: Joi.string().required(),
       phone: Joi.string().required()
     });
-    const {error} = Joi.validate(req.body, schema);
+    const { error } = Joi.validate(req.body, schema);
     if (error && error.details) {
       return next(error);
     }
-    passport.authenticate('signup', async (err, user, info) => {
+    passport.authenticate("signup", async (err, user, info) => {
       try {
         if (err || !user) {
           return next(err);
@@ -44,28 +43,28 @@ module.exports = {
   async login(req, res, next) {
     const schema = Joi.object().keys({
       email: Joi.string()
-        .email({minDomainAtoms: 2})
+        .email({ minDomainAtoms: 2 })
         .required(),
       password: Joi.string().required()
     });
-    const {error} = Joi.validate(req.body, schema);
+    const { error } = Joi.validate(req.body, schema);
     if (error && error.details) {
       return next(error);
     }
-    passport.authenticate('login', async (pError, user) => {
+    passport.authenticate("login", async (pError, user) => {
       try {
         if (pError || !user) {
           return next(pError);
         }
-        req.login(user, {session: false}, async err => {
+        req.login(user, { session: false }, async err => {
           if (err) return next(err);
-          const body = {id: user._id, email: user.email, role: user.role};
-          const token = jwt.sign({user: body}, config.get('secret'), {
-            expiresIn: config.get('accessTokenLifetime')
+          const body = { id: user._id, email: user.email, role: user.role };
+          const token = jwt.sign({ user: body }, config.get("secret"), {
+            expiresIn: 100
           });
           return res.wrapJSON({
             token,
-            refreshToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+            refreshToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"
           });
         });
       } catch (e) {
@@ -78,15 +77,15 @@ module.exports = {
       const schema = Joi.object().keys({
         refreshToken: Joi.string().required()
       });
-      const {error} = Joi.validate(req.body, schema);
+      const { error } = Joi.validate(req.body, schema);
       if (error && error.details) {
         return next(error);
       }
       // TODO: Get user refreshToken,
       return res.wrapJSON({
         token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMywiZW1haWwiOiJsZXJlLmFraW53dW5taUBnbWFpbC5jb20ifSwiaWF0IjoxNTUzMjU1Njk4fQ.a-TUhV6lGAe4aaXNnciuJuYQU-WK8Ux0oXvtRTd3K1I',
-        refreshToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMywiZW1haWwiOiJsZXJlLmFraW53dW5taUBnbWFpbC5jb20ifSwiaWF0IjoxNTUzMjU1Njk4fQ.a-TUhV6lGAe4aaXNnciuJuYQU-WK8Ux0oXvtRTd3K1I",
+        refreshToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"
       });
     } catch (err) {
       return next(err);
@@ -98,30 +97,30 @@ module.exports = {
         userID: Joi.string().required(),
         token: Joi.string().required()
       });
-      const {value, error} = Joi.validate(req.body, schema);
+      const { value, error } = Joi.validate(req.body, schema);
       if (error && error.details) {
         return next(error);
       }
       const user = await User.findById(value.userID);
       if (!user) {
-        return next(StatusError('userID does not match a registered user'));
+        return next(StatusError("userID does not match a registered user"));
       }
       if (user.emailConfirmed) {
-        return next(new StatusError('User email confirmed'));
+        return next(new StatusError("User email confirmed"));
       }
       const token = await user.getVerificationToken();
       if (token.token === value.token) {
         try {
           await models.sequelize.transaction(async t => {
-            await user.update({emailConfirmed: true}, {transaction: t});
-            await token.destroy({transaction: t});
+            await user.update({ emailConfirmed: true }, { transaction: t });
+            await token.destroy({ transaction: t });
           });
-          return res.wrapJSON({message: 'Email confirmed'});
+          return res.wrapJSON({ message: "Email confirmed" });
         } catch (e) {
           return next(e);
         }
       } else {
-        return next(new StatusError('Token incorrect'));
+        return next(new StatusError("Token incorrect"));
       }
     } catch (err) {
       return next(err);
@@ -131,10 +130,10 @@ module.exports = {
     try {
       const schema = Joi.object().keys({
         email: Joi.string()
-          .email({minDomainAtoms: 2})
+          .email({ minDomainAtoms: 2 })
           .required()
       });
-      const {value, error} = Joi.validate(req.body, schema);
+      const { value, error } = Joi.validate(req.body, schema);
       if (error && error.details) {
         return next(error);
       }
@@ -145,28 +144,28 @@ module.exports = {
         }
       });
       if (!user) {
-        return next(new StatusError('Email does not match a registered user'));
+        return next(new StatusError("Email does not match a registered user"));
       }
       // If mail exists, create token and send password reset email
       const token = await VerificationToken.findOrCreate({
-        where: {UserId: user.id},
-        defaults: {token: crypto({length: 16})}
+        where: { UserId: user.id },
+        defaults: { token: crypto({ length: 16 }) }
       });
 
       emailQueue.add(
         {
           to: user.email,
-          subject: 'Password Reset',
-          templateName: 'passwordReset',
+          subject: "Password Reset",
+          templateName: "passwordReset",
           data: {
             chakaID: user.chakaID,
             token: token[0].dataValues.token
           }
         },
-        {removeOnComplete: true}
+        { removeOnComplete: true }
       );
       return res.wrapJSON({
-        message: 'Password reset email sent'
+        message: "Password reset email sent"
       });
     } catch (err) {
       return next(err);
@@ -181,7 +180,7 @@ module.exports = {
         newPassword: Joi.string().required(),
         token: Joi.string().required()
       });
-      const {value, error} = Joi.validate(req.body, schema);
+      const { value, error } = Joi.validate(req.body, schema);
       if (error && error.details) {
         return next(error);
       }
@@ -191,24 +190,29 @@ module.exports = {
         }
       });
       if (!user) {
-        return next(new StatusError('chakaID does not match a registered user'));
+        return next(
+          new StatusError("chakaID does not match a registered user")
+        );
       }
       const token = await user.getVerificationToken();
       if (token && token.token === value.token) {
         try {
           await models.sequelize.transaction(async t => {
-            await user.update({passwordHash: value.newPassword}, {transaction: t});
-            await token.destroy({transaction: t});
+            await user.update(
+              { passwordHash: value.newPassword },
+              { transaction: t }
+            );
+            await token.destroy({ transaction: t });
           });
-          return res.wrapJSON({message: 'Password changed successfully'});
+          return res.wrapJSON({ message: "Password changed successfully" });
         } catch (e) {
           return next(e);
         }
       } else {
-        return next(new StatusError('Token incorrect'));
+        return next(new StatusError("Token incorrect"));
       }
     } catch (err) {
       return next(err);
     }
-  },
+  }
 };
